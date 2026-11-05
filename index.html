@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO Meta Tags Primarios -->
+  <title>Loteo360 | Tours Virtuales 360° para Loteos en Andahuaylas y Todo el Perú</title>
+  <meta name="description" content="Especialistas en recorridos virtuales 360° con dron y mapeo interactivo de lotizaciones. Base operativa en Andahuaylas, Apurímac con cobertura en todo el Perú. Vende tus lotes desde WhatsApp con entrega desde 24 horas.">
+  <meta name="keywords" content="loteo 360 andahuaylas, lotizacion 360 andahuaylas peru, tours virtuales 360 terrenos andahuaylas, tours 360 lotes apurimac, planos interactivos loteos peru, recorridos virtuales con dron peru, venta de terrenos 360">
+  <meta name="author" content="Loteo360 Perú">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <link rel="canonical" href="https://loteo360.com/">
+
+  <!-- Geo-Tags SEO Local (Andahuaylas, Apurímac, Perú) -->
+  <meta name="geo.region" content="PE-APU">
+  <meta name="geo.placename" content="Andahuaylas, Apurímac, Perú">
+  <meta name="geo.position" content="-13.6556;-73.3872">
+  <meta name="ICBM" content="-13.6556, -73.3872">
+
+  <!-- Open Graph / Redes Sociales -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://loteo360.com/">
+  <meta property="og:title" content="Loteo360 | Tours Virtuales 360° para Loteos en Andahuaylas y Todo el Perú">
+  <meta property="og:description" content="Convierte planos 2D en recorridos 360° inmersivos. Especialistas en lotizaciones campestres y urbanizaciones. Oficina en Andahuaylas, atención a todo el Perú.">
+  <meta property="og:locale" content="es_PE">
+  <meta property="og:site_name" content="Loteo360">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Fuentes Google: Inter & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              cyan: '#00F2FE',
+              blue: '#4FACFE',
+              dark: '#070A10',
+              card: '#0D1424',
+              border: 'rgba(255, 255, 255, 0.1)'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #070A10;
+      color: #E2E8F0;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 750px;
+      height: 750px;
+      background: radial-gradient(circle, rgba(0, 242, 254, 0.12) 0%, rgba(79, 172, 254, 0.04) 40%, transparent 70%);
+      top: -150px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    #canvas360 {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      display: block;
+    }
+
+    .glass-panel {
+      background: rgba(13, 20, 36, 0.75);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .glass-panel-card {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .glass-panel-card:hover {
+      border-color: rgba(0, 242, 254, 0.35);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px -15px rgba(0, 242, 254, 0.15);
+    }
+
+    .simulated-fullscreen {
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      z-index: 99999 !important;
+      border-radius: 0 !important;
+      max-width: none !important;
+      padding: 0 !important;
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      background: #1e293b;
+      border-radius: 9999px;
+      height: 8px;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 22px;
+      width: 22px;
+      border-radius: 50%;
+      background: #00F2FE;
+      cursor: pointer;
+      box-shadow: 0 0 12px rgba(0, 242, 254, 0.8);
+      border: 2px solid #ffffff;
+    }
+
+    .badge-discount {
+      background: linear-gradient(135deg, #00F2FE 0%, #4FACFE 100%);
+      color: #040914;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-cyan-500 selection:text-black">
+
+  <!-- ==================== HEADER ==================== -->
+  <header class="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+      
+      <!-- Logotipo -->
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-400 to-blue-500 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
+          <svg class="w-5 h-5 text-slate-950" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
+          </svg>
+        </div>
+        <div>
+          <span class="text-lg font-black tracking-tight text-white font-display block leading-none">LOTEO<span class="text-cyan-400">360</span></span>
+          <span class="text-[10px] tracking-widest text-slate-400 uppercase font-mono">ESTUDIO VIRTUAL INMOBILIARIO</span>
+        </div>
+      </a>
+
+      <!-- Navegación Escritorio -->
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+        <a href="#demo-real" class="hover:text-cyan-400 transition-colors">Visor en Vivo</a>
+        <a href="#como-funciona" class="hover:text-cyan-400 transition-colors">Cómo Funciona</a>
+        <a href="#comparativa" class="hover:text-cyan-400 transition-colors">Ventajas de Venta</a>
+        <a href="#paquetes" class="hover:text-cyan-400 transition-colors">Planes y Precios</a>
+        <a href="#calculadora" class="hover:text-cyan-400 transition-colors">Calculadora</a>
+      </nav>
+
+      <!-- Botón WhatsApp Directo Header -->
+      <div class="flex items-center gap-3">
+        <a href="https://wa.me/51920051460?text=Hola,%20quiero%20cotizar%20un%20Tour%20360%20para%20mi%20lotizaci%C3%B3n" 
+           target="_blank" 
+           rel="noopener noreferrer"
+           class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold text-xs uppercase tracking-wider shadow-lg shadow-emerald-500/20 transition-all transform hover:-translate-y-0.5">
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
+          </svg>
+          <span class="hidden sm:inline">WhatsApp Oficial: 920 051 460</span>
+          <span class="sm:hidden">Cotizar</span>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ==================== HERO SECTION INMERSIVA ==================== -->
+  <section class="relative min-h-screen pt-28 pb-36 flex flex-col justify-center items-center overflow-hidden px-4">
+    
+    <canvas id="canvas360"></canvas>
+    <div class="hero-glow"></div>
+
+    <!-- Contenido Inmediato (Sin retraso de 5 segundos para máxima conversión) -->
+    <div id="heroContentBlock" class="relative z-10 max-w-4xl text-center mx-auto transition-all duration-500 ease-out">
+      
+      <div class="rounded-3xl bg-slate-950/75 backdrop-blur-md p-6 sm:p-10 border border-white/10 shadow-2xl">
+        
+        <div class="inline-flex flex-wrap items-center justify-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-300 text-xs font-mono mb-6">
+          <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+          <span>ESTUDIO TÉCNICO EN ANDAHUAYLAS</span>
+          <span class="text-slate-500">•</span>
+          <span class="text-slate-300">COBERTURA EN TODO EL PERÚ</span>
+        </div>
+
+        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white font-display leading-[1.1] mb-6 drop-shadow-lg">
+          Tours Virtuales 360° para Loteos que <br class="hidden sm:inline" />
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-400 to-indigo-300">
+            Aceleran Cierres y Reservas Inmobiliarias
+          </span>
+        </h1>
+
+        <p class="text-base sm:text-lg text-slate-200 max-w-2xl mx-auto mb-8 font-normal leading-relaxed drop-shadow">
+          Digitalizamos tu <strong>lotización en 360°</strong> con levantamiento aéreo de alta precisión. Tus compradores en Andahuaylas, Lima o el extranjero recorren el terreno desde su celular, tocan su lote y reservan directamente por WhatsApp.
+        </p>
+
+        <!-- Botones de Acción -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
+          <a href="#demo-real" class="w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-slate-950 font-bold text-sm uppercase tracking-wider shadow-xl shadow-cyan-500/25 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-3">
+            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+            </svg>
+            Ver Demostración en Vivo
+          </a>
+
+          <a href="#paquetes" class="w-full sm:w-auto px-7 py-4 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-white font-semibold text-sm border border-white/20 transition-all flex items-center justify-center gap-2">
+            Ver Tarifas y Planes
+          </a>
+        </div>
+
+        <!-- Insignias de Confianza Corporativa -->
+        <div class="flex flex-wrap items-center justify-center gap-6 text-xs text-slate-300 font-medium">
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-emerald-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            Contrato & Facturación
+          </span>
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-cyan-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            Pago 50% / 50% Contra Entrega
+          </span>
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            Soporte de Actualizaciones Incluido
+          </span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Barra HUD de Control -->
+    <div class="absolute bottom-6 sm:bottom-8 z-10 left-1/2 -translate-x-1/2 w-full max-w-xl px-4 pointer-events-none">
+      <div class="glass-panel py-2 px-3 sm:px-4 rounded-2xl flex flex-wrap items-center justify-between gap-2 shadow-2xl border border-cyan-500/20 pointer-events-auto text-[11px] font-mono">
+        
+        <div class="flex items-center gap-2 text-cyan-300">
+          <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+          <span class="font-bold hidden sm:inline">SIMULACIÓN 3D INTERACTIVA</span>
+        </div>
+
+        <div class="flex items-center gap-1.5 sm:gap-2">
+          <button onclick="ocultarTextosPor10s()" 
+                  title="Ocultar paneles para ver solo el terreno 3D"
+                  class="px-2.5 py-1.5 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 transition-colors flex items-center gap-1.5 font-bold">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            <span>Solo Terreno</span>
+          </button>
+
+          <button onclick="toggleGiro()" id="btnToggleGiro" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 transition-colors flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span>Pausar</span>
+          </button>
+
+          <button onclick="cambiarAltitud()" id="btnAltitud" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 transition-colors">
+            ↑ Altitud: 120m
+          </button>
+
+          <button onclick="toggleModoVisual()" id="btnModoVisual" class="px-2.5 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-amber-300 transition-colors">
+            Modo Blueprint
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ==================== MÉTRICAS DE IMPACTO COMERCIAL ==================== -->
+  <section class="py-12 border-y border-white/5 bg-slate-950/60 relative z-10">
+    <div class="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+      <div>
+        <div class="text-3xl sm:text-4xl font-black text-cyan-400 font-display">60%</div>
+        <p class="text-xs sm:text-sm text-slate-300 mt-1 font-medium">Mayor velocidad de cierre en clientes remotos</p>
+      </div>
+      <div>
+        <div class="text-3xl sm:text-4xl font-black text-emerald-400 font-display">100%</div>
+        <p class="text-xs sm:text-sm text-slate-300 mt-1 font-medium">Compatible en celulares sin instalar apps</p>
+      </div>
+      <div>
+        <div class="text-3xl sm:text-4xl font-black text-blue-400 font-display">-15 Visitas</div>
+        <p class="text-xs sm:text-sm text-slate-300 mt-1 font-medium">Menos viajes presenciales innecesarios</p>
+      </div>
+      <div>
+        <div class="text-3xl sm:text-4xl font-black text-amber-400 font-display">24 - 72h</div>
+        <p class="text-xs sm:text-sm text-slate-300 mt-1 font-medium">Tiempos de entrega récord garantizados</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== EL VISOR DE PRUEBA REAL (DEMO INTERACTIVA) ==================== -->
+  <section id="demo-real" class="py-20 px-4 max-w-7xl mx-auto w-full relative z-10">
+    
+    <div class="text-center max-w-3xl mx-auto mb-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-400 text-xs font-mono mb-3">
+        TECNOLOGÍA EN VIVO PARA TUS CLIENTES
+      </div>
+      <h2 class="text-3xl sm:text-4xl font-black text-white font-display">
+        Pruébalo Tú Mismo: Así Navegarán tus Compradores
+      </h2>
+      <p class="text-sm sm:text-base text-slate-400 mt-3">
+        Interactúa con este tour real. Gira la cámara con el dedo o mouse, toca un lote para ver sus datos técnicos y experimenta la velocidad de carga inmediata.
+      </p>
+    </div>
+
+    <!-- Contenedor del Visor Embebido -->
+    <div id="interactiveCard" class="relative rounded-3xl glass-panel p-2 sm:p-4 border border-cyan-500/30 shadow-2xl transition-all duration-300">
+      
+      <div class="flex items-center justify-between px-3 py-2 bg-slate-950/70 rounded-2xl mb-3 border border-white/5 text-xs">
+        <div class="flex items-center gap-2 text-slate-400">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+          <span class="font-mono text-[11px] text-slate-300">Demostración en servidor activo</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button onclick="recargarDemo()" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 transition-colors flex items-center gap-1 text-[11px]">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Recargar
+          </button>
+          
+          <button onclick="toggleFullscreen()" class="px-2.5 py-1 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 transition-colors flex items-center gap-1 text-[11px] font-semibold">
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+            </svg>
+            Pantalla Completa
+          </button>
+        </div>
+      </div>
+
+      <!-- Iframe a la demo real -->
+      <div class="relative w-full h-[520px] sm:h-[620px] rounded-2xl overflow-hidden bg-slate-950">
+        <iframe 
+          id="iframeDemo"
+          src="https://tours.mozari.app/lote-1-trscr/" 
+          class="w-full h-full border-0"
+          title="Tour 360 Loteo Demo"
+          allow="accelerometer; gyroscope; magnetometer; fullscreen"
+          loading="lazy">
+        </iframe>
+      </div>
+
+      <!-- Barra inferior informativa -->
+      <div class="mt-3 px-3 py-2 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
+        <div class="flex items-center gap-2">
+          <span class="text-cyan-400 font-bold">●</span>
+          <span>Actualización de lotes disponibles o reservados incluida sin costo</span>
+        </div>
+        <div class="font-mono text-[11px] text-slate-500">
+          Tecnología WebGL inmersiva • Sin descargar aplicaciones
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ==================== CÓMO FUNCIONA ==================== -->
+  <section id="como-funciona" class="py-20 px-4 max-w-7xl mx-auto w-full relative z-10">
+    
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      
+      <div class="lg:col-span-7 space-y-8">
+        <div>
+          <span class="text-xs font-mono font-bold uppercase tracking-wider text-lime-400 block mb-2">Metodología de Trabajo</span>
+          <h2 class="text-3xl sm:text-5xl font-black text-white font-display leading-tight">
+            De un plano técnico a un recorrido comercial listo para vender.
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-4">
+          <div class="space-y-2">
+            <span class="text-2xl font-black text-lime-400 font-display">01</span>
+            <h4 class="text-base font-bold text-white font-display">Envío de Información</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Nos compartes tu plano en CAD, PDF o imagen clara con la ubicación del proyecto en Google Maps.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <span class="text-2xl font-black text-lime-400 font-display">02</span>
+            <h4 class="text-base font-bold text-white font-display">Vuelo & Modelado</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Nuestro equipo técnico realiza la captura aérea con dron profesional y proyecta digitalmente las manzanas y lotes.
+            </p>
+          </div>
+
+          <div class="space-y-2">
+            <span class="text-2xl font-black text-lime-400 font-display">03</span>
+            <h4 class="text-base font-bold text-white font-display">Entrega & Venta</h4>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Recibes el enlace interactivo y código QR listo para que tu fuerza de ventas cierre reservas de inmediato.
+            </p>
+          </div>
+        </div>
+
+        <div class="pt-4 flex flex-wrap items-center gap-4">
+          <a href="https://wa.me/51920051460?text=Hola,%20quiero%20coordinar%20un%20Tour%20360%20para%20mi%20proyecto" 
+             target="_blank" 
+             rel="noopener noreferrer"
+             class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold text-xs uppercase tracking-wider shadow-lg shadow-emerald-500/20 transition-all transform hover:-translate-y-0.5">
+            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+              <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
+            </svg>
+            <span>Coordinar Proyecto por WhatsApp</span>
+          </a>
+          <span class="text-xs text-slate-400 font-mono">Respaldo legal: Contrato de servicios incluido</span>
+        </div>
+      </div>
+
+      <div class="lg:col-span-5">
+        <div class="relative rounded-3xl overflow-hidden glass-panel border border-white/10 shadow-2xl group">
+          <img 
+            src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1000&q=80" 
+            alt="Terreno y loteo aéreo con dron" 
+            class="w-full h-[380px] sm:h-[440px] object-cover group-hover:scale-105 transition-transform duration-700"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+
+          <div class="absolute bottom-6 left-6 right-6 p-4 rounded-2xl glass-panel border border-white/10">
+            <span class="text-[11px] font-mono text-cyan-400 block mb-1">BASE EN ANDAHUAYLAS • SERVICIO A NIVEL NACIONAL</span>
+            <p class="text-xs text-slate-200 font-medium">
+              Especialistas en loteos campestres y urbanizaciones en Apurímac, Cusco, Ayacucho, Arequipa y proyectos en todo el Perú.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ==================== COMPARATIVA VISUAL ==================== -->
+  <section id="comparativa" class="py-20 px-4 max-w-7xl mx-auto w-full relative z-10">
+    
+    <div class="text-center max-w-2xl mx-auto mb-14">
+      <h2 class="text-2xl sm:text-4xl font-black text-white font-display">
+        Por qué un plano estático en PDF reduce tus ventas
+      </h2>
+      <p class="text-sm text-slate-400 mt-2">
+        La diferencia comercial entre un cliente que duda durante semanas y uno que transfiere la separación.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      
+      <!-- Método Antiguo -->
+      <div class="rounded-3xl p-6 sm:p-8 bg-red-950/20 border border-red-500/20 relative">
+        <div class="inline-block px-3 py-1 rounded-full bg-red-500/10 text-red-400 text-xs font-mono mb-4">
+          ✕ El Formato Tradicional (Plano en PDF o Imagen)
+        </div>
+        <h3 class="text-xl font-bold text-white font-display mb-4">Material estático que enfría la intención</h3>
+        <ul class="space-y-3.5 text-xs sm:text-sm text-slate-300">
+          <li class="flex items-start gap-3">
+            <span class="text-red-400 font-bold">✕</span>
+            <span><strong>Falta de ubicación espacial:</strong> El cliente no logra interpretar cómo queda el lote respecto a vías de acceso o áreas comunes.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-red-400 font-bold">✕</span>
+            <span><strong>Sobrecarga del equipo de ventas:</strong> Los asesores pierden horas respondiendo reiteradamente medidas y disponibilidad.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-red-400 font-bold">✕</span>
+            <span><strong>Imposible vender a distancia:</strong> Un comprador fuera de la ciudad posterga la decisión hasta poder viajar físicamente.</span>
+          </li>
+        </ul>
+        <div class="mt-6 pt-4 border-t border-red-500/20 text-xs text-red-300 font-mono">
+          Consecuencia: Ciclos de venta extensos y pérdida de prospectos calificados.
+        </div>
+      </div>
+
+      <!-- Con Loteo360 -->
+      <div class="rounded-3xl p-6 sm:p-8 bg-cyan-950/20 border border-cyan-500/30 relative shadow-xl shadow-cyan-950/50">
+        <div class="inline-block px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 text-xs font-mono mb-4">
+          ✓ Con Loteo360 (Recorrido Interactivo con Dron)
+        </div>
+        <h3 class="text-xl font-bold text-white font-display mb-4">Experiencia inmersiva con cierre inmediato</h3>
+        <ul class="space-y-3.5 text-xs sm:text-sm text-slate-200">
+          <li class="flex items-start gap-3">
+            <span class="text-cyan-400 font-bold">✓</span>
+            <span><strong>Certeza Inmediata:</strong> El comprador toca su lote, ve metraje, precio y orientación exacta en alta definición.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-cyan-400 font-bold">✓</span>
+            <span><strong>Cierres Remotos Efectivos:</strong> Facilita ventas a residentes en Lima, otras provincias o peruanos en el exterior.</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="text-cyan-400 font-bold">✓</span>
+            <span><strong>Disponibilidad en Tiempo Real:</strong> Nuestro equipo actualiza el estado de vendido o reservado sin costo adicional.</span>
+          </li>
+        </ul>
+        <div class="mt-6 pt-4 border-t border-cyan-500/30 text-xs text-cyan-300 font-mono">
+          Consecuencia: Mayor velocidad de rotación de lotes y mayor confianza comercial.
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ==================== PAQUETES COMERCIALES TRANSPARENTES ==================== -->
+  <section id="paquetes" class="py-20 px-4 max-w-7xl mx-auto w-full relative z-10">
+    
+    <div class="text-center max-w-2xl mx-auto mb-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-400/20 text-cyan-400 text-xs font-mono mb-3">
+        INVERSIÓN CLARA Y TRANSPARENTE
+      </div>
+      <h2 class="text-3xl sm:text-5xl font-black text-white font-display">
+        Planes y Tarifas de Lanzamiento
+      </h2>
+      <p class="text-sm sm:text-base text-slate-400 mt-3">
+        Elige la modalidad de visualización que mejor se adapte a tu etapa de comercialización.
+      </p>
+
+      <!-- Selector de Moneda (USD / PEN) -->
+      <div class="mt-6 inline-flex items-center p-1 rounded-xl bg-slate-900 border border-white/10 text-xs font-bold font-mono">
+        <button id="btnCurrencyPEN" onclick="setCurrency('PEN')" class="px-4 py-2 rounded-lg bg-cyan-500/20 text-cyan-300 transition-all">
+          🇵🇪 Soles (PEN)
+        </button>
+        <button id="btnCurrencyUSD" onclick="setCurrency('USD')" class="px-4 py-2 rounded-lg text-slate-400 hover:text-white transition-all">
+          💵 Dólares (USD)
+        </button>
+      </div>
+    </div>
+
+    <!-- Cuadrícula de 3 Paquetes -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+      
+      <!-- PAQUETE 1: FLASH 24H -->
+      <div class="rounded-3xl glass-panel-card p-6 sm:p-8 flex flex-col justify-between border-slate-800">
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <span class="px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-400 font-mono text-[11px] font-bold">
+              ⚡ ENTREGA EXPRESS EN 24H
+            </span>
+            <span class="px-2 py-0.5 rounded badge-discount text-[10px]">
+              31% OFF
+            </span>
+          </div>
+
+          <h3 class="text-2xl font-black text-white font-display mt-2">Plan Flash 24H</h3>
+          <p class="text-xs text-slate-400 mt-1 min-h-[32px]">
+            Para etapas iniciales o proyectos compactos que requieren iniciar preventa de inmediato.
+          </p>
+
+          <!-- Precios Dinámicos -->
+          <div class="mt-6 mb-6">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs text-slate-500 line-through" id="planFlashAntes">Antes S/ 1,590 PEN</span>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span class="text-4xl font-black text-white font-display" id="planFlashPrecio">S/ 1,100</span>
+              <span class="text-xs text-slate-400 font-mono" id="planFlashMoneda">PEN (Pago único)</span>
+            </div>
+            <span class="text-[11px] text-cyan-400/80 block mt-1" id="planFlashEquiv">Aprox. $290 USD</span>
+          </div>
+
+          <ul class="space-y-3 text-xs text-slate-300 mb-8">
+            <li class="flex items-center gap-2.5">
+              <span class="text-cyan-400 font-bold">✓</span>
+              <span><strong>Hasta 20 lotes</strong> delimitados y numerados</span>
+            </li>
+            <li class="flex items-center gap-2.5">
+              <span class="text-cyan-400 font-bold">✓</span>
+              <span><strong>Entrega garantizada en 24 horas</strong></span>
+            </li>
+            <li class="flex items-center gap-2.5">
+              <span class="text-cyan-400 font-bold">✓</span>
+              <span>Ficha técnica individual por lote</span>
+            </li>
+            <li class="flex items-center gap-2.5">
+              <span class="text-emerald-400 font-bold">✓</span>
+              <span><strong>Hosting en la nube por 1 año incluido</strong></span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="text-cyan-400 font-bold mt-0.5">✓</span>
+              <span><strong>Actualizaciones sin costo:</strong> Marcado de vendidos y reservados</span>
+            </li>
+            <li class="flex items-center gap-2.5">
+              <span class="text-cyan-400 font-bold">✓</span>
+              <span>Enlace web directo + Código QR para carteles</span>
+            </li>
+            <li class="pt-3 border-t border-white/10 flex items-start gap-2.5 text-slate-400">
+              <span class="text-cyan-400 font-bold mt-0.5">✓</span>
+              <span>Enlaces independientes por vendedor (+S/ 38 o $10 por enlace)</span>
+            </li>
+          </ul>
+        </div>
+
+        <button onclick="seleccionarPlanDirecto('Plan Flash 24H')" 
+                class="w-full py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs uppercase tracking-wider transition-all border border-white/10">
+          Solicitar Plan Flash
+        </button>
+      </div>
+
+      <!-- PAQUETE 2: PLAN EXPRESS 360 (MÁS PEDIDO) -->
+      <div class="rounded-3xl glass-panel p-6 sm:p-8 flex flex-col justify-between border-2 border-cyan-400 relative shadow-2xl shadow-cyan-500/10 bg-gradient-to-b from-cyan-950/40 via-slate-900/60 to-slate-950/80">
+        
+        <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-cyan-400 text-slate-950 font-black text-[11px] uppercase tracking-wider shadow-lg">
+          ★ PLAN MÁS SOLICITADO
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <span class="px-2.5 py-1 rounded-full bg-cyan-500/20 text-cyan-300 font-mono text-[11px]">
+              URBANIZACIONES MEDIANAS
+            </span>
+            <span class="px-2 py-0.5 rounded badge-discount text-[10px]">
+              31% OFF
+            </span>
+          </div>
+
+          <h3 class="text-2xl font-black text-white font-display mt-2">Plan Express 360</h3>
+          <p class="text-xs text-slate-300 mt-1 min-h-[32px]">
+            La opción predilecta para desarrolladores que buscan máximo impacto y rotación veloz.
+          </p>
+
+          <!-- Precios Dinámicos -->
+          <div class="mt-6 mb-6">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs text-slate-400 line-through" id="planExpressAntes">Antes S/ 2,660 PEN</span>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span class="text-4xl font-black text-cyan-300 font-display" id="planExpressPrecio">S/ 1,820</span>
+              <span class="text-xs text-slate-400 font-mono" id="planExpressMoneda">PEN (Pago único)</span>
+            </div>
+            <span class="text-[11px] text-cyan-400/80 block mt-1" id="planExpressEquiv">Aprox. $480 USD</span>
+          </div>
+
+          <ul class="space-y-3 text-xs text-slate-200 mb-8">
+            <li class="flex items-center gap-2.5">
+              <span class="text-cyan-400 font-bold">✓</span>
+              <span><strong>Hasta 50 lotes</strong> delimitados y numerados</span>
+            </li>
+            <li class="flex items-center gap-2.5">
+              <span class="text-cyan-400 font-bold">✓</span>
+              <span>Ficha técnica detallada por lote</span>
+            </li>
+            <li class="flex items-center gap-2.5">
+              <span class="text-emerald-400 font-bold">✓</span>
+              <span><strong>Hosting en la nube por 1 año incluido</strong></span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="text-cyan-400 font-bold mt-0.5">✓</span>
+              <span><strong>Actualizaciones sin costo:</strong> Marcado continuo de ventas</span>
+            </li>
+            <li class="flex items-center gap-2.5">
+              <span class="text-cyan-400 font-bold">✓</span>
+              <span>Integración de locución comercial del proyecto</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="text-cyan-400 font-bold mt-0.5">✓</span>
+              <span>Enlace corporativo personalizado con la marca del desarrollo</span>
+            </li>
+            <li class="flex items-center gap-2.5">
+              <span class="text-cyan-400 font-bold">✓</span>
+              <span>Entrega técnica en 3 a 4 días hábiles</span>
+            </li>
+            <li class="pt-3 border-t border-white/10 flex items-start gap-2.5 text-slate-300">
+              <span class="text-cyan-400 font-bold mt-0.5">✓</span>
+              <span>Enlaces independientes por asesor (+S/ 38 o $10 por enlace)</span>
+            </li>
+          </ul>
+        </div>
+
+        <button onclick="seleccionarPlanDirecto('Plan Express 360')" 
+                class="w-full py-4 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-slate-950 font-black text-xs uppercase tracking-wider shadow-lg shadow-cyan-500/25 transition-all transform hover:-translate-y-0.5">
+          Solicitar Plan Express
+        </button>
+      </div>
+
+      <!-- PAQUETE 3: MASTERPLAN COMERCIAL -->
+      <div class="rounded-3xl glass-panel-card p-6 sm:p-8 flex flex-col justify-between border-slate-800">
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <span class="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400 font-mono text-[11px]">
+              DESARROLLOS AMPLIOS
+            </span>
+            <span class="px-2 py-0.5 rounded badge-discount text-[10px]">
+              31% OFF
+            </span>
+          </div>
+
+          <h3 class="text-2xl font-black text-white font-display mt-2">Masterplan Comercial</h3>
+          <p class="text-xs text-slate-400 mt-1 min-h-[32px]">
+            La solución integral para urbanizaciones con múltiples etapas y manzanas.
+          </p>
+
+          <!-- Precios Dinámicos -->
+          <div class="mt-6 mb-6">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xs text-slate-500 line-through" id="planMasterAntes">Antes S/ 4,900 PEN</span>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span class="text-4xl font-black text-white font-display" id="planMasterPrecio">S/ 3,380</span>
+              <span class="text-xs text-slate-400 font-mono" id="planMasterMoneda">PEN (Pago único)</span>
+            </div>
+            <span class="text-[11px] text-cyan-400/80 block mt-1" id="planMasterEquiv">Aprox. $890 USD</span>
+          </div>
+
+          <ul class="space-y-3 text-xs text-slate-300 mb-8">
+            <li class="flex items-center gap-2.5">
+              <span class="text-blue-400 font-bold">✓</span>
+              <span><strong>De 51 a 100 lotes</strong> delimitados y vinculados</span>
+            </li>
+            <li class="flex items-center gap-2.5">
+              <span class="text-blue-400 font-bold">✓</span>
+              <span>Ficha técnica individual por lote</span>
+            </li>
+            <li class="flex items-center gap-2.5">
+              <span class="text-blue-400 font-bold">✓</span>
+              <span>Locución comercial y musicalización de fondo</span>
+            </li>
+            <li class="flex items-start gap-2.5">
+              <span class="text-cyan-400 font-bold mt-0.5">✓</span>
+              <span><strong>Actualizaciones continuas sin costo</strong></span>
+            </li>
+            <li class="flex items-center gap-2.5">
+              <span class="text-blue-400 font-bold">✓</span>
+              <span>Hosting de alto rendimiento por 12 meses</span>
+            </li>
+            <li class="flex items-center gap-2.5">
+              <span class="text-blue-400 font-bold">✓</span>
+              <span>Mapeo multicámara de accesos y equipamiento</span>
+            </li>
+            <li class="pt-3 border-t border-white/10 flex items-start gap-2.5 text-slate-400">
+              <span class="text-blue-400 font-bold mt-0.5">✓</span>
+              <span>Enlaces independientes por asesor (+S/ 38 o $10 por enlace)</span>
+            </li>
+          </ul>
+        </div>
+
+        <button onclick="seleccionarPlanDirecto('Masterplan Comercial')" 
+                class="w-full py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs uppercase tracking-wider transition-all border border-white/10">
+          Elegir Masterplan
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Banner Proyectos Mayores a 100 Lotes -->
+    <div class="mt-8 rounded-3xl p-6 sm:p-8 bg-slate-900/60 border border-white/10 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="space-y-1 text-center md:text-left">
+        <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-300 font-mono text-[11px]">
+          MACRO-URBANIZACIONES & MEGAPROYECTOS
+        </div>
+        <h3 class="text-xl sm:text-2xl font-black text-white font-display">
+          ¿Tu proyecto supera los 100 Lotes?
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-400 max-w-xl">
+          Multi-alturas de dron, enlaces por manzanas independientes y personalización gráfica completa para desarrolladoras inmobiliarias.
+        </p>
+      </div>
+
+      <a href="https://wa.me/51920051460?text=Hola,%20tengo%20un%20proyecto%20de%20m%C3%A1s%20de%20100%20lotes%20y%20deseo%20una%20propuesta%20institucional" 
+         target="_blank" 
+         rel="noopener noreferrer" 
+         class="px-6 py-3.5 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-slate-950 font-bold text-xs uppercase tracking-wider shadow-lg shadow-cyan-500/20 whitespace-nowrap transition-all transform hover:-translate-y-0.5 shrink-0">
+        Cotizar Proyecto +100 Lotes
+      </a>
+    </div>
+
+    <!-- Garantía y Política Clara de Cobertura -->
+    <div class="mt-8 p-5 rounded-2xl bg-cyan-950/20 border border-cyan-500/20 max-w-4xl mx-auto flex flex-col sm:flex-row items-center gap-4 text-xs text-slate-300 leading-relaxed text-center sm:text-left">
+      <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-400/30 flex items-center justify-center text-cyan-400 shrink-0 font-bold text-lg">
+        ✓
+      </div>
+      <div>
+        <strong class="text-white">Garantía de Servicio y Transparencia Operativa:</strong> Las tarifas mostradas aplican para lotes de 90 m² a 140 m² dentro de Andahuaylas y valles contiguos (hasta 10 km). Para proyectos en Cusco, Ayacucho, Arequipa, Lima u otras regiones del país, se aplica la misma tarifa técnica base más los viáticos directos de traslado del piloto y equipo.
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ==================== CALCULADORA INTERACTIVA ==================== -->
+  <section id="calculadora" class="py-20 px-4 max-w-4xl mx-auto w-full">
+    
+    <div class="rounded-3xl glass-panel p-6 sm:p-10 border border-cyan-500/30 shadow-2xl relative overflow-hidden">
+      
+      <div class="text-center max-w-xl mx-auto mb-8">
+        <span class="text-xs font-mono font-bold uppercase tracking-wider text-cyan-400">Cotizador Instantáneo</span>
+        <h2 class="text-2xl sm:text-4xl font-black text-white font-display mt-1">
+          Calcula tu Inversión en Segundos
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-400 mt-2">
+          Desplaza la barra según la cantidad de lotes que necesitas publicar.
+        </p>
+      </div>
+
+      <div class="space-y-4 mb-8">
+        <div class="flex items-center justify-between text-sm font-mono">
+          <span class="text-slate-400">Cantidad de Lotes:</span>
+          <span class="text-xl sm:text-2xl font-black text-cyan-300" id="calcLotesDisplay">45 Lotes</span>
+        </div>
+
+        <input 
+          type="range" 
+          id="sliderLotes" 
+          min="5" 
+          max="200" 
+          step="5" 
+          value="45" 
+          oninput="actualizarCalculadora(this.value)" 
+          class="w-full cursor-pointer"
+        />
+
+        <div class="flex justify-between text-[10px] font-mono text-slate-500">
+          <span>5 Lotes</span>
+          <span>50 Lotes</span>
+          <span>100 Lotes</span>
+          <span>100+ Lotes</span>
+        </div>
+      </div>
+
+      <!-- Cuadro de Resultado -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-5 rounded-2xl bg-slate-950/70 border border-white/5 mb-8">
+        <div>
+          <span class="text-[10px] font-mono uppercase text-slate-400 block mb-1">Plan Recomendado</span>
+          <h4 class="text-base sm:text-lg font-bold text-white font-display" id="calcPlanNombre">Plan Express 360</h4>
+          <span class="text-xs text-cyan-400 block mt-1" id="calcTiempoEntrega">3 a 4 Días</span>
+        </div>
+
+        <div class="sm:text-right flex flex-col justify-center">
+          <span class="text-[10px] font-mono uppercase text-slate-400 block mb-0.5" id="calcLabelTitulo">Inversión Estimada</span>
+          
+          <div id="calcPrecioNormalWrapper">
+            <div class="flex items-center sm:justify-end gap-2">
+              <span class="text-xs text-slate-500 line-through" id="calcPrecioAntes">Antes S/ 2,660</span>
+              <span class="px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 text-[10px] font-bold" id="calcBadgeDescuento">31% OFF</span>
+            </div>
+            <div class="text-2xl sm:text-3xl font-black text-white font-display" id="calcPrecioEstimado">S/ 1,820 PEN</div>
+            <span class="text-[11px] text-cyan-400/80 block mt-0.5" id="calcEquivalenciaUSD">Aprox. $480 USD</span>
+          </div>
+
+          <div id="calcBotonWhatsAppDirecto" class="hidden">
+            <a href="https://wa.me/51920051460?text=Hola,%20tengo%20un%20proyecto%20de%20m%C3%A1s%20de%20100%20lotes" 
+               id="btnCotizarDirectoMacro" 
+               target="_blank" 
+               class="inline-block px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 text-slate-950 font-bold text-xs uppercase tracking-wider">
+              Cotizar con Asesor
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botón de Envío WhatsApp -->
+      <a href="https://wa.me/51920051460" 
+         id="btnWhatsappCalc" 
+         target="_blank" 
+         rel="noopener noreferrer" 
+         class="w-full py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-wider shadow-lg shadow-emerald-500/25 transition-all flex items-center justify-center gap-2">
+        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
+        </svg>
+        <span id="txtBtnWhatsappCalc">Consultar Propuesta Técnica por WhatsApp</span>
+      </a>
+
+    </div>
+
+  </section>
+
+  <!-- ==================== PREGUNTAS FRECUENTES ==================== -->
+  <section class="py-16 px-4 max-w-6xl mx-auto w-full relative z-10">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <span class="text-xs font-mono font-bold uppercase tracking-wider text-cyan-400">Preguntas Frecuentes • Claridad Total</span>
+      <h3 class="text-2xl sm:text-3xl font-black text-white font-display mt-1">
+        Aspectos Clave del Servicio y Metodología
+      </h3>
+      <p class="text-xs sm:text-sm text-slate-400 mt-2">
+        Detalles sobre visita técnica, entregas, facturación y soporte comercial continuo.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-left">
+      <!-- FAQ 1 -->
+      <div class="p-5 rounded-2xl glass-panel border border-white/5">
+        <h4 class="text-sm font-bold text-white mb-2 font-display flex items-center gap-2">
+          <span class="text-cyan-400">📍</span> ¿Dónde se encuentra la base operativa?
+        </h4>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Nuestra base operativa está ubicada en <strong>Andahuaylas (Apurímac)</strong>, permitiéndonos realizar levantamientos inmediatos en todo el valle y provincias vecinas, además de atender proyectos en todo el territorio peruano bajo coordinación previa.
+        </p>
+      </div>
+
+      <!-- FAQ 2 -->
+      <div class="p-5 rounded-2xl glass-panel border border-white/5">
+        <h4 class="text-sm font-bold text-white mb-2 font-display flex items-center gap-2">
+          <span class="text-cyan-400">🇵🇪</span> ¿Cómo se gestionan los proyectos en otras regiones?
+        </h4>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Atendemos proyectos inmobiliarios en <strong>Cusco, Ayacucho, Arequipa, Lima y todo el Perú</strong>. Se mantiene la misma tarifa técnica base y se coordinan previamente los costos de traslado y estadía de nuestro equipo técnico.
+        </p>
+      </div>
+
+      <!-- FAQ 3 -->
+      <div class="p-5 rounded-2xl glass-panel border border-white/5">
+        <h4 class="text-sm font-bold text-white mb-2 font-display flex items-center gap-2">
+          <span class="text-cyan-400">📐</span> ¿Qué documentación se requiere y qué ocurre si el terreno está en trocha?
+        </h4>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Únicamente se necesita el plano de distribución (AutoCAD, PDF o plano legible) y la ubicación en Google Maps. Si el proyecto se encuentra en apertura de trochas o fase preliminar, <strong>es la fase idónea</strong>: proyectamos digitalmente vías y linderos para preventa efectiva.
+        </p>
+      </div>
+
+      <!-- FAQ 4 -->
+      <div class="p-5 rounded-2xl glass-panel border border-white/5">
+        <h4 class="text-sm font-bold text-white mb-2 font-display flex items-center gap-2">
+          <span class="text-cyan-400">💳</span> ¿Cuáles son las facilidades y modalidades de pago?
+        </h4>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Trabajamos con esquema de total seguridad y confianza: <strong>50% al coordinar el vuelo técnico y 50% restante contra entrega</strong> y conformidad del recorrido. Emitimos comprobantes de pago de ley.
+        </p>
+      </div>
+
+      <!-- FAQ 5 -->
+      <div class="p-5 rounded-2xl glass-panel border border-white/5">
+        <h4 class="text-sm font-bold text-white mb-2 font-display flex items-center gap-2">
+          <span class="text-cyan-400">👥</span> ¿Se pueden habilitar enlaces independientes para cada asesor comercial?
+        </h4>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Sí. Por una tarifa mínima de +S/ 38 (+10 USD) por enlace adicional, cada vendedor de su equipo recibe un enlace personalizado donde las consultas de los lotes se dirigen a su número de WhatsApp individual.
+        </p>
+      </div>
+
+      <!-- FAQ 6 -->
+      <div class="p-5 rounded-2xl glass-panel border border-white/5">
+        <h4 class="text-sm font-bold text-white mb-2 font-display flex items-center gap-2">
+          <span class="text-cyan-400">⚡</span> ¿Cómo se actualiza el estado de los lotes vendidos?
+        </h4>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Su equipo no necesita ingresar a plataformas complejas. Cada vez que concrete una venta o separación, reporta el número de lote a nuestro canal de soporte técnico por WhatsApp y <strong>nuestro equipo lo actualiza sin costo adicional</strong>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="border-t border-white/5 bg-slate-950/95 py-12 px-4 mt-16">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-xs text-slate-400">
+      
+      <div class="space-y-1 text-center md:text-left">
+        <div class="flex items-center justify-center md:justify-start gap-2">
+          <span class="font-bold text-white font-display text-base tracking-tight">LOTEO<span class="text-cyan-400">360</span></span>
+          <span class="text-[10px] px-2 py-0.5 rounded bg-white/5 font-mono text-slate-300">ESTUDIO VIRTUAL INMOBILIARIO</span>
+        </div>
+        <p class="text-[11px] text-slate-500">
+          Oficina Técnica: Andahuaylas, Apurímac • Cobertura en todo el territorio peruano
+        </p>
+        <p class="text-[11px] font-mono text-slate-500">
+          Razón Comercial: LOTEO360 PERÚ • Facturación & Contratos de Servicios
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-center gap-6">
+        <a href="#demo-real" class="hover:text-cyan-400 transition-colors">Demostración</a>
+        <a href="#como-funciona" class="hover:text-cyan-400 transition-colors">Cómo Funciona</a>
+        <a href="#paquetes" class="hover:text-cyan-400 transition-colors">Planes</a>
+        <a href="#calculadora" class="hover:text-cyan-400 transition-colors">Calculadora</a>
+        <a href="https://wa.me/51920051460" target="_blank" class="hover:text-cyan-400 text-cyan-300 font-semibold transition-colors">
+          WhatsApp: +51 920 051 460
+        </a>
+      </div>
+
+      <div class="text-[11px] text-slate-600 text-center md:text-right">
+        © 2026 LOTEO360. Todos los derechos reservados.
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ==================== BOTÓN FLOTANTE PERMANENTE DE WHATSAPP ==================== -->
+  <a href="https://wa.me/51920051460?text=Hola,%20deseo%20cotizar%20un%20Tour%20360%20para%20mi%20lotizaci%C3%B3n"
+     target="_blank"
+     rel="noopener noreferrer"
+     title="Contactar por WhatsApp"
+     class="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider shadow-2xl shadow-emerald-500/50 hover:scale-105 transition-all duration-300 group">
+    <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+      <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
+    </svg>
+    <span class="hidden sm:inline">Cotizar por WhatsApp</span>
+  </a>
+
+  <!-- ==================== LÓGICA JAVASCRIPT REFORZADA ==================== -->
+  <script>
+    const WHATSAPP_NUM = '51920051460';
+    const TASA_CAMBIO = 3.80; // Soles por Dólar
+    let monedaActual = 'PEN'; // Por defecto Soles para Perú
+
+    const PLANES_BASE = {
+      flash: { usd: 290, usdAntes: 420 },
+      express: { usd: 480, usdAntes: 700 },
+      masterplan: { usd: 890, usdAntes: 1290 }
+    };
+
+    function setCurrency(moneda) {
+      monedaActual = moneda;
+      const btnPEN = document.getElementById('btnCurrencyPEN');
+      const btnUSD = document.getElementById('btnCurrencyUSD');
+
+      if (moneda === 'PEN') {
+        btnPEN.className = 'px-4 py-2 rounded-lg bg-cyan-500/20 text-cyan-300 transition-all';
+        btnUSD.className = 'px-4 py-2 rounded-lg text-slate-400 hover:text-white transition-all';
+
+        document.getElementById('planFlashAntes').textContent = 'Antes S/ ' + Math.round(PLANES_BASE.flash.usdAntes * TASA_CAMBIO).toLocaleString() + ' PEN';
+        document.getElementById('planFlashPrecio').textContent = 'S/ ' + Math.round(PLANES_BASE.flash.usd * TASA_CAMBIO).toLocaleString();
+        document.getElementById('planFlashMoneda').textContent = 'PEN (Pago único)';
+        document.getElementById('planFlashEquiv').textContent = 'Aprox. $290 USD';
+
+        document.getElementById('planExpressAntes').textContent = 'Antes S/ ' + Math.round(PLANES_BASE.express.usdAntes * TASA_CAMBIO).toLocaleString() + ' PEN';
+        document.getElementById('planExpressPrecio').textContent = 'S/ ' + Math.round(PLANES_BASE.express.usd * TASA_CAMBIO).toLocaleString();
+        document.getElementById('planExpressMoneda').textContent = 'PEN (Pago único)';
+        document.getElementById('planExpressEquiv').textContent = 'Aprox. $480 USD';
+
+        document.getElementById('planMasterAntes').textContent = 'Antes S/ ' + Math.round(PLANES_BASE.masterplan.usdAntes * TASA_CAMBIO).toLocaleString() + ' PEN';
+        document.getElementById('planMasterPrecio').textContent = 'S/ ' + Math.round(PLANES_BASE.masterplan.usd * TASA_CAMBIO).toLocaleString();
+        document.getElementById('planMasterMoneda').textContent = 'PEN (Pago único)';
+        document.getElementById('planMasterEquiv').textContent = 'Aprox. $890 USD';
+      } else {
+        btnUSD.className = 'px-4 py-2 rounded-lg bg-cyan-500/20 text-cyan-300 transition-all';
+        btnPEN.className = 'px-4 py-2 rounded-lg text-slate-400 hover:text-white transition-all';
+
+        document.getElementById('planFlashAntes').textContent = 'Antes $' + PLANES_BASE.flash.usdAntes + ' USD';
+        document.getElementById('planFlashPrecio').textContent = '$' + PLANES_BASE.flash.usd;
+        document.getElementById('planFlashMoneda').textContent = 'USD (Pago único)';
+        document.getElementById('planFlashEquiv').textContent = 'Aprox. S/ ' + Math.round(PLANES_BASE.flash.usd * TASA_CAMBIO).toLocaleString() + ' PEN';
+
+        document.getElementById('planExpressAntes').textContent = 'Antes $' + PLANES_BASE.express.usdAntes + ' USD';
+        document.getElementById('planExpressPrecio').textContent = '$' + PLANES_BASE.express.usd;
+        document.getElementById('planExpressMoneda').textContent = 'USD (Pago único)';
+        document.getElementById('planExpressEquiv').textContent = 'Aprox. S/ ' + Math.round(PLANES_BASE.express.usd * TASA_CAMBIO).toLocaleString() + ' PEN';
+
+        document.getElementById('planMasterAntes').textContent = 'Antes $' + PLANES_BASE.masterplan.usdAntes + ' USD';
+        document.getElementById('planMasterPrecio').textContent = '$' + PLANES_BASE.masterplan.usd;
+        document.getElementById('planMasterMoneda').textContent = 'USD (Pago único)';
+        document.getElementById('planMasterEquiv').textContent = 'Aprox. S/ ' + Math.round(PLANES_BASE.masterplan.usd * TASA_CAMBIO).toLocaleString() + ' PEN';
+      }
+
+      const slider = document.getElementById('sliderLotes');
+      if (slider) actualizarCalculadora(slider.value);
+    }
+
+    // ---------- MOTOR CANVAS 3D INTERACTIVO ----------
+    let canvas = null;
+    let ctx = null;
+    let width = 0;
+    let height = 0;
+    let rotY = 0;
+    let isDragging = false;
+    let lastMouseX = 0;
+    let autoRotate = true;
+    let cameraAltitude = 120;
+    let isBlueprint = false;
+
+    function resizeCanvas() {
+      if (!canvas) return;
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+
+    function initCanvasEvents() {
+      canvas = document.getElementById('canvas360');
+      if (!canvas) return false;
+      ctx = canvas.getContext('2d');
+      if (!ctx) return false;
+
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
+
+      canvas.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        lastMouseX = e.clientX;
+      });
+      window.addEventListener('mouseup', () => isDragging = false);
+      canvas.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - lastMouseX;
+        rotY += dx * 0.006;
+        lastMouseX = e.clientX;
+      });
+
+      canvas.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          isDragging = true;
+          lastMouseX = e.touches[0].clientX;
+        }
+      }, { passive: true });
+      window.addEventListener('touchend', () => isDragging = false);
+      window.addEventListener('touchmove', (e) => {
+        if (!isDragging || e.touches.length !== 1) return;
+        const dx = e.touches[0].clientX - lastMouseX;
+        rotY += dx * 0.007;
+        lastMouseX = e.touches[0].clientX;
+      }, { passive: true });
+
+      return true;
+    }
+
+    const lotesGrid = [];
+    const manzanas = [
+      { x: -380, z: -260, cols: 5, rows: 2, name: 'Mz. A' },
+      { x: 40,   z: -260, cols: 5, rows: 2, name: 'Mz. B' },
+      { x: -380, z: 60,   cols: 5, rows: 2, name: 'Mz. C' },
+      { x: 40,   z: 60,   cols: 5, rows: 2, name: 'Mz. D' }
+    ];
+
+    manzanas.forEach(mz => {
+      const lotW = 60;
+      const lotH = 75;
+      for (let r = 0; r < mz.rows; r++) {
+        for (let c = 0; c < mz.cols; c++) {
+          lotesGrid.push({
+            x: mz.x + c * (lotW + 8),
+            z: mz.z + r * (lotH + 8),
+            w: lotW,
+            h: lotH,
+            mz: mz.name,
+            num: r * mz.cols + c + 1,
+            isVendido: (c + r) % 3 === 0
+          });
+        }
+      }
+    });
+
+    const pois = [
+      { x: 0, z: 0, text: 'Pórtico Principal', icon: '📍' },
+      { x: -220, z: -100, text: 'Parque Central', icon: '🌳' },
+      { x: 180, z: 200, text: 'Zona Comercial', icon: '🏬' }
+    ];
+
+    function project3D(x, y, z) {
+      const cosY = Math.cos(rotY);
+      const sinY = Math.sin(rotY);
+      const rx = x * cosY - z * sinY;
+      const rz = x * sinY + z * cosY;
+
+      const pitch = 0.42 + (cameraAltitude - 60) * 0.0012;
+      const cosP = Math.cos(pitch);
+      const sinP = Math.sin(pitch);
+      const ry = y * cosP - rz * sinP;
+      const rDepth = y * sinP + rz * cosP + 780;
+
+      if (rDepth <= 80) return null;
+
+      const fov = 750;
+      const screenX = width / 2 + (rx * fov) / rDepth;
+      const screenY = height / 2 + (ry * fov) / rDepth + (height * 0.1);
+      const scale = fov / rDepth;
+
+      return { x: screenX, y: screenY, depth: rDepth, scale };
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      if (!ctx || !canvas) return;
+
+      if (autoRotate && !isDragging) {
+        rotY += 0.0016;
+      }
+
+      ctx.clearRect(0, 0, width, height);
+
+      const bgGrad = ctx.createRadialGradient(width / 2, height / 2, 50, width / 2, height / 2, width);
+      if (isBlueprint) {
+        bgGrad.addColorStop(0, '#0a2342');
+        bgGrad.addColorStop(1, '#030d18');
+      } else {
+        bgGrad.addColorStop(0, '#0f172a');
+        bgGrad.addColorStop(1, '#020617');
+      }
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, width, height);
+
+      const gridSize = 1400;
+      const step = 90;
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = isBlueprint ? 'rgba(0, 242, 254, 0.16)' : 'rgba(56, 189, 248, 0.14)';
+
+      for (let g = -gridSize; g <= gridSize; g += step) {
+        const p1 = project3D(g, 0, -gridSize);
+        const p2 = project3D(g, 0, gridSize);
+        if (p1 && p2) {
+          ctx.beginPath();
+          ctx.moveTo(p1.x, p1.y);
+          ctx.lineTo(p2.x, p2.y);
+          ctx.stroke();
+        }
+        const q1 = project3D(-gridSize, 0, g);
+        const q2 = project3D(gridSize, 0, g);
+        if (q1 && q2) {
+          ctx.beginPath();
+          ctx.moveTo(q1.x, q1.y);
+          ctx.lineTo(q2.x, q2.y);
+          ctx.stroke();
+        }
+      }
+
+      lotesGrid.forEach(lote => {
+        const corners = [
+          project3D(lote.x, 0, lote.z),
+          project3D(lote.x + lote.w, 0, lote.z),
+          project3D(lote.x + lote.w, 0, lote.z + lote.h),
+          project3D(lote.x, 0, lote.z + lote.h)
+        ];
+
+        if (corners.some(c => c === null)) return;
+
+        ctx.beginPath();
+        ctx.moveTo(corners[0].x, corners[0].y);
+        for (let i = 1; i < 4; i++) {
+          ctx.lineTo(corners[i].x, corners[i].y);
+        }
+        ctx.closePath();
+
+        if (lote.isVendido) {
+          ctx.fillStyle = isBlueprint ? 'rgba(239, 68, 68, 0.22)' : 'rgba(239, 68, 68, 0.28)';
+          ctx.strokeStyle = 'rgba(239, 68, 68, 0.7)';
+        } else {
+          ctx.fillStyle = isBlueprint ? 'rgba(0, 242, 254, 0.18)' : 'rgba(16, 185, 129, 0.22)';
+          ctx.strokeStyle = isBlueprint ? 'rgba(0, 242, 254, 0.8)' : 'rgba(52, 211, 153, 0.8)';
+        }
+        ctx.lineWidth = 1.4;
+        ctx.fill();
+        ctx.stroke();
+
+        const center = project3D(lote.x + lote.w / 2, 0, lote.z + lote.h / 2);
+        if (center && center.scale > 0.75) {
+          ctx.font = `${Math.max(9, Math.floor(11 * center.scale))}px monospace`;
+          ctx.textAlign = 'center';
+          ctx.fillStyle = lote.isVendido ? 'rgba(252, 165, 165, 0.85)' : 'rgba(255, 255, 255, 0.85)';
+          ctx.fillText(`L-${lote.num}`, center.x, center.y + 4);
+        }
+      });
+
+      pois.forEach(poi => {
+        const pt = project3D(poi.x, -25, poi.z);
+        if (pt) {
+          ctx.fillStyle = 'rgba(14, 165, 233, 0.9)';
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, 4.5 * Math.max(0.6, pt.scale), 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.font = '10px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillStyle = '#ffffff';
+          ctx.shadowColor = 'rgba(0,0,0,0.8)';
+          ctx.shadowBlur = 4;
+          ctx.fillText(`${poi.icon} ${poi.text}`, pt.x, pt.y - 10);
+          ctx.shadowBlur = 0;
+        }
+      });
+    }
+
+    // Arranque
+    window.onload = function() {
+      if (initCanvasEvents()) {
+        animate();
+      }
+      setCurrency('PEN');
+    };
+
+    function toggleGiro() {
+      autoRotate = !autoRotate;
+      const btn = document.getElementById('btnToggleGiro');
+      if (btn) {
+        btn.innerHTML = autoRotate
+          ? '<svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg><span>Pausar</span>'
+          : '<svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/></svg><span>Reanudar</span>';
+      }
+    }
+
+    function cambiarAltitud() {
+      if (cameraAltitude === 60) cameraAltitude = 120;
+      else if (cameraAltitude === 120) cameraAltitude = 250;
+      else cameraAltitude = 60;
+      const btn = document.getElementById('btnAltitud');
+      if (btn) btn.innerHTML = `↑ Altitud: ${cameraAltitude}m`;
+    }
+
+    function toggleModoVisual() {
+      isBlueprint = !isBlueprint;
+      const btn = document.getElementById('btnModoVisual');
+      if (btn) btn.innerHTML = isBlueprint ? 'Modo Satelital' : 'Modo Blueprint';
+    }
+
+    let hideTimeout = null;
+    function ocultarTextosPor10s() {
+      const block = document.getElementById('heroContentBlock');
+      if (!block) return;
+      block.classList.add('opacity-0', 'pointer-events-none');
+
+      if (hideTimeout) clearTimeout(hideTimeout);
+      hideTimeout = setTimeout(() => {
+        block.classList.remove('opacity-0', 'pointer-events-none');
+      }, 10000);
+    }
+
+    function recargarDemo() {
+      const iframe = document.getElementById('iframeDemo');
+      if (iframe) iframe.src = iframe.src;
+    }
+
+    function toggleFullscreen() {
+      const container = document.getElementById('interactiveCard');
+      if (!container) return;
+      try {
+        if (!document.fullscreenElement) {
+          container.requestFullscreen().catch(() => {
+            container.classList.toggle('simulated-fullscreen');
+          });
+        } else {
+          document.exitFullscreen();
+        }
+      } catch (err) {
+        container.classList.toggle('simulated-fullscreen');
+      }
+    }
+
+    // ---------- CALCULADORA DINÁMICA CON MONEDA DUAL ----------
+    function actualizarCalculadora(lotes) {
+      const cant = parseInt(lotes, 10);
+      document.getElementById('calcLotesDisplay').textContent = `${cant} Lotes`;
+
+      let plan = '';
+      let tiempo = '';
+      let usd = 0;
+      let usdAntes = 0;
+      let descuento = '31% OFF';
+
+      const boxPrecioWrapper = document.getElementById('calcPrecioNormalWrapper');
+      const boxBotonMacro = document.getElementById('calcBotonWhatsAppDirecto');
+      const labelTitulo = document.getElementById('calcLabelTitulo');
+
+      if (cant <= 20) {
+        plan = 'Plan Flash 24H';
+        tiempo = '1 Día (24 Horas Garantizadas)';
+        usd = PLANES_BASE.flash.usd;
+        usdAntes = PLANES_BASE.flash.usdAntes;
+      } else if (cant <= 50) {
+        plan = 'Plan Express 360';
+        tiempo = '3 a 4 Días Hábiles';
+        usd = PLANES_BASE.express.usd;
+        usdAntes = PLANES_BASE.express.usdAntes;
+      } else if (cant <= 100) {
+        plan = 'Masterplan Comercial';
+        tiempo = '12 a 15 Días';
+        usd = PLANES_BASE.masterplan.usd;
+        usdAntes = PLANES_BASE.masterplan.usdAntes;
+      } else {
+        plan = 'Macro-Urbanización (+100 Lotes)';
+        tiempo = 'Propuesta y cronograma a medida';
+      }
+
+      descuento = usdAntes > 0 ? Math.round((1 - usd / usdAntes) * 100) + '% OFF' : '';
+      document.getElementById('calcPlanNombre').textContent = plan;
+      document.getElementById('calcTiempoEntrega').textContent = tiempo;
+
+      if (cant > 100) {
+        labelTitulo.textContent = 'Propuesta Personalizada';
+        boxPrecioWrapper.classList.add('hidden');
+        boxBotonMacro.classList.remove('hidden');
+
+        const mensajeMacro = `Hola! Represento a un proyecto inmobiliario de ${cant} lotes y deseo cotizar un Tour 360 institucional.`;
+        document.getElementById('btnCotizarDirectoMacro').href = `https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent(mensajeMacro)}`;
+        document.getElementById('btnWhatsappCalc').href = `https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent(mensajeMacro)}`;
+        document.getElementById('txtBtnWhatsappCalc').textContent = 'Cotizar Macro-Urbanización por WhatsApp';
+      } else {
+        labelTitulo.textContent = 'Inversión Estimada';
+        boxPrecioWrapper.classList.remove('hidden');
+        boxBotonMacro.classList.add('hidden');
+
+        const pen = Math.round(usd * TASA_CAMBIO);
+        const penAntes = Math.round(usdAntes * TASA_CAMBIO);
+
+        if (monedaActual === 'PEN') {
+          document.getElementById('calcPrecioAntes').textContent = `Antes S/ ${penAntes.toLocaleString()}`;
+          document.getElementById('calcBadgeDescuento').textContent = descuento;
+          document.getElementById('calcPrecioEstimado').textContent = `S/ ${pen.toLocaleString()} PEN`;
+          document.getElementById('calcEquivalenciaUSD').textContent = `Aprox. $${usd} USD`;
+        } else {
+          document.getElementById('calcPrecioAntes').textContent = `Antes $${usdAntes}`;
+          document.getElementById('calcBadgeDescuento').textContent = descuento;
+          document.getElementById('calcPrecioEstimado').textContent = `$${usd} USD`;
+          document.getElementById('calcEquivalenciaUSD').textContent = `Aprox. S/ ${pen.toLocaleString()} PEN`;
+        }
+
+        const precioTxt = monedaActual === 'PEN' ? `S/ ${pen} PEN ($${usd} USD)` : `$${usd} USD (S/ ${pen} PEN)`;
+        const mensaje = `Hola! Deseo cotizar un Tour 360 para un proyecto de ${cant} lotes (${plan} - Inversión: ${precioTxt}). ¿Podemos coordinar?`;
+        document.getElementById('btnWhatsappCalc').href = `https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent(mensaje)}`;
+        document.getElementById('txtBtnWhatsappCalc').textContent = 'Consultar Propuesta por WhatsApp';
+      }
+    }
+
+    function seleccionarPlanDirecto(nombrePlan) {
+      const mensaje = `Hola! Nos interesa contratar el ${nombrePlan} para nuestro proyecto inmobiliario. ¿Podemos coordinar los detalles técnicos?`;
+      window.open(`https://wa.me/${WHATSAPP_NUM}?text=${encodeURIComponent(mensaje)}`, '_blank');
+    }
+  </script>
+
+</body>
+</html>
